@@ -545,6 +545,20 @@ class VLLMConverter(BaseModel):
                 match part_param["type"]:
                     case "input_text":
                         part_param["type"] = "text"
+                    case "input_image":
+                        # Convert Responses API image format to chat completions image_url format.
+                        # ResponseInputImageParam: {"type": "input_image", "image_url": "<url>", "detail": "auto"}
+                        # ChatCompletionContentPartImageParam: {"type": "image_url", "image_url": {"url": "...", "detail": "..."}}
+                        detail = part_param.pop("detail", None)
+                        image_url_val = part_param.get("image_url")
+                        part_param["type"] = "image_url"
+                        if isinstance(image_url_val, str):
+                            url_dict: dict = {"url": image_url_val}
+                            if detail is not None:
+                                url_dict["detail"] = detail
+                            part_param["image_url"] = url_dict
+                        elif isinstance(image_url_val, dict) and detail is not None:
+                            part_param["image_url"]["detail"] = detail
                     case _:
                         raise NotImplementedError(f"Unsupported part param type: {part_param['type']}")
 

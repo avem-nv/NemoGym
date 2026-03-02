@@ -1,0 +1,35 @@
+nemotron_parse_server:
+  resources_servers:
+    nemotron_parse:
+      entrypoint: app.py
+      domain: other
+      verified: false
+      description: Document page parsing with Nemotron-Parse NIM
+
+nemotron_parse_agent:
+  responses_api_agents:
+    simple_agent:
+      entrypoint: app.py
+      resources_server:
+        type: resources_servers
+        name: nemotron_parse_server
+      model_server:
+        type: responses_api_models
+        name: policy_model
+      # nemotron-parse returns a single function_call then stops; one step is all we need.
+      max_steps: 1
+      datasets:
+      - name: example
+        type: example
+        jsonl_fpath: resources_servers/nemotron_parse/data/example.jsonl
+
+policy_model:
+  responses_api_models:
+    vllm_model:
+      entrypoint: app.py
+      base_url: ${policy_base_url}
+      api_key: ${policy_api_key}
+      model: ${policy_model_name}
+      return_token_id_information: false
+      # nemotron-parse does not emit <think> blocks
+      uses_reasoning_parser: false
