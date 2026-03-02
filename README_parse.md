@@ -44,6 +44,11 @@ Use `generate_inference.py` to produce an `inference.jsonl` file from your image
 ```
 Data path: /ads_ds3/data/nemotron_parse/inference.jsonl
 ```
+Start ng server:
+
+```
+RAY_TMPDIR=/tmp ng_run "+config_paths=[resources_servers/nemotron_parse/configs/nemotron_parse.yaml]"
+```
 
 Then collect rollouts:
 
