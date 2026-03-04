@@ -1,17 +1,17 @@
 #!/bin/bash
 
 ip_path="/ads_ds3/data/nemotron_parse/nemo_gym_data/inference.jsonl"
-op_path="/ads_ds3/data/nemotron_parse/nemo_gym_data/verif_rewards_8k_temp0.0"
+op_path="/ads_ds3/data/nemotron_parse/nemo_gym_data/vllm_verif_rewards_6k"
 mkdir -p $op_path
 
-OP_FILE=$op_path/nemo_gym_rollouts.jsonl
-LOG_FILE=$op_path/rollouts.log
+OP_FILE="${op_path}/nemo_gym_rollouts.jsonl"
+LOG_FILE="${op_path}/rollouts.log"
 ng_collect_rollouts \
   +agent_name=nemotron_parse_agent \
   +input_jsonl_fpath=$ip_path \
   +output_jsonl_fpath=$OP_FILE \
   +num_repeats=1 \
-  "+responses_create_params={max_output_tokens: 8192, temperature: 0.0}"
+  "+responses_create_params={max_output_tokens: 6000, temperature: 0.0}"
 
 python /raid/home/avem/nemogym/data/nemo_gym_data/strip_input.py --input $OP_FILE
 
@@ -19,8 +19,7 @@ exit 0
 ### End of example commands ###
 # Example commands:
 # Start servers
-#  ng_run "+config_paths=[resources_servers/nemotron_parse/configs/nemotron_parse.yaml,responses_api_models/vllm
- # _model/configs/vllm_model.yaml]"
+#  ng_run "+config_paths=[resources_servers/nemotron_parse/configs/nemotron_parse.yaml,responses_api_models/vllm_model/configs/vllm_model.yaml]"
 
   # Smoke test with example data (5 entries)
 #  ng_collect_rollouts \

@@ -123,11 +123,18 @@ class NemotronParseResourcesServer(SimpleResourcesServer):
         - no repeating pattern (model degeneration)
         - no abnormally long concatenated tokens (OCR-like failure)
         """
+
         parsed_content = None
         for item in body.response.output:
-            if hasattr(item, "type") and item.type == "function_call":
-                parsed_content = item.arguments
-                break
+            if hasattr(item, "type") and item.type != "message":
+                continue
+            if hasattr(item, "content"):
+                for c in item.content:
+                    if hasattr(c, "type") and c.type == "output_text":
+                        parsed_content = c.text
+                        break
+                if parsed_content:
+                    break
 
         if parsed_content and (detect_repeating_pattern(parsed_content) or detect_long_strings(parsed_content)):
             reward = 0.0

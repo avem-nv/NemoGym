@@ -33,3 +33,7 @@ policy_model:
       return_token_id_information: false
       # nemotron-parse does not emit <think> blocks
       uses_reasoning_parser: false
+      extra_body:
+        skip_special_tokens: false
+        repetition_penalty: 1.1
+        top_k: 1
